@@ -1,4 +1,5 @@
 import json
+import re
 from pprint import pprint
 
 
@@ -7,21 +8,19 @@ def parse(filename):
 
     with open(filename) as f:
         for line in f:
-            line = line.replace("u'","\"")
-            line = line.replace("u\"", "\"")
-            line = line.replace("':", "\":")
-            line = line.replace("',", "\",")
-            line = line.replace("']", "\"]")
-            line = line.replace("'}", "\"}")
-            line = line.replace(" date", " \"date")
-            line = line.replace("),", ")\",")
-            line = line.replace(")',", ")\",")
-            line = line.replace("None", "\"None\"")
-            line = line.replace("Object", "\"Object")
 
-            data += [json.loads(line)]
+            datum = {}
+
+            resultObj = re.search( r"result': u'(.+?)'}", line).group(1)
+            urlObj = re.search( r"url': u'(.+?)', ", line).group(1)
+
+            datum['url'] = urlObj
+            datum['result'] = resultObj
+
+            data += [datum]
 
     pprint(data)
+    return data
 
 
 def test():
